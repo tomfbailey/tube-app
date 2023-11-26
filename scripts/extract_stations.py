@@ -4,16 +4,66 @@ import json
 file_path = input("Enter the file path (or press Enter to use default 'stations.json'): ")
 
 DEFAULT_TARGET_FILE = "raw/victoria.json"
+DEFAULT_TARGET_FILE_SEQ = "raw/victoria_seq.json"
 
 # Use default file path if no input is provided
-file_path = file_path.strip() if file_path.strip() else DEFAULT_TARGET_FILE
+if file_path.strip() == "":
+    file_path = DEFAULT_TARGET_FILE
+    file_path_seq = DEFAULT_TARGET_FILE_SEQ
+else:
+    file_path = file_path.strip()
+    file_path_seq = file_path.split(".")[0] + "_seq.json"
 
 # Load JSON data from file
 with open(file_path, 'r') as file:
     data = json.load(file)
 
 nodes = []
+# Extract edge data from the sequence file, under orderedLineRoutes
+with open(file_path_seq, 'r') as file:
+    seq_data = json.load(file)
+
+adj_list = {} # Adjacency list of sets
+for route in seq_data.get("orderedLineRoutes", None):
+    print(type(route))
+    stops = route.get("naptanIds", None)
+    print(type(stops), stops)
+    # start is s, end is e.
+    # s will be the first stop, e will be the second stop, then s will be the second stop, and e will be the third stop, etc.
+    for s, e in zip(stops, stops[1:]):
+        # Add s to the adjacency list if it doesn't exist
+        if s not in adj_list:
+            adj_list[s] = set()
+        # Add e to the adjacency list if it doesn't exist
+        if e not in adj_list:
+            adj_list[e] = set()
+        # Add e to the adjacency list of s
+        adj_list[s].add(e)
+        # Add s to the adjacency list of e
+        adj_list[e].add(s)
+
 edges = []  # Empty set of edges
+
+# Now iterate through the adjacency list and add edges in the format 
+"""
+[
+      {
+        data: { id: 'ab', source: 'a', target: 'b' }
+      },
+      ...
+]
+"""
+for s in adj_list:
+    for e in adj_list[s]:
+        edges.append({
+            "data": {
+                "id": s + e, # TODO: Will need to make the properly unique
+                "source": s,
+                "target": e,
+                "line": "victoria"
+            }
+        })
+
 
 # Extract 'lat', 'lon', and 'commonName' from each object
 for item in data:
@@ -22,7 +72,7 @@ for item in data:
     lon = item.get("lon", None)
     naptan_id = item.get("naptanId", None)
     common_name = item.get("commonName", None)
-    line = "victoria" # TODO: Get the line from the file name
+    line = "victoria" # TODO: Get the line from the file name; actually can get from data itself too
 
     # Strip any trailing " Underground Station" from the common name
     common_name = common_name.replace(" Underground Station", "")

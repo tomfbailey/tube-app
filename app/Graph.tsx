@@ -31,6 +31,12 @@ import graphData from '../data/victoria.json';
                     'text-outline-width': '2px',
                     'text-outline-opacity': '1'
                 }
+            },
+            {
+                selector: 'edge[line = "victoria"]', // Select nodes with line=victoria
+                style: {
+                    'line-color': '#0098D4', // Set the background color to blue
+                }
             }
         ];
     
