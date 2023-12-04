@@ -22,11 +22,12 @@ osmium extract --bbox=-1.225093,51.297993,0.70588,51.847656 raw/england-latest.o
 
 # Filter these to railway stations
 echo "Filtering to railway stations..."
-osmium tags-filter raw/expanded-london.osm.pbf nwr/railway=station -o raw/subway_stations_tmp.osm
+osmium tags-filter raw/expanded-london.osm.pbf --overwrite nwr/railway=station -o raw/subway_stations_tmp.osm
 
 # Filter these to station=subway (i.e. London Underground)
 echo "Filtering to London Underground stations..."
-osmium tags-filter raw/subway_stations_tmp.osm nwr/station=subway -o raw/subway_stations.osm
+osmium tags-filter raw/subway_stations_tmp.osm --overwrite nwr/station=*subway -o raw/subway_stations.osm
+# We do *subway because some stations are tagged as station=light_rail;subway instead of just station=subway
 
 # Delete temporary file
 echo "Deleting temporary file..."
@@ -46,6 +47,8 @@ echo "Processing Ways..."
 # Extract everything under the London Underground relation
 echo "Extracting everything under the London Underground relation..."
 osmium getid -r raw/england-latest.osm.pbf r7225135 --output raw/london-underground.osm
+
+# TODO: Redownload geofabrik extract in a few days to see if the northern line way has been fixed
 
 echo "Done."
 
