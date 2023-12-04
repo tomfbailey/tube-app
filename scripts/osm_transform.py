@@ -163,11 +163,13 @@ ax.set_aspect('equal')
 ax.set_axis_off()
 
 # Set plot title and labels
-ax.set_title('Ways and Points Plot')
 ax.set_xlabel('Longitude')
 ax.set_ylabel('Latitude')
+
+# Add a very small text box in the bottom right corner crediting OSM
+ax.text(0.99, 0.01, '© OpenStreetMap', transform=ax.transAxes, color='gray', ha='right', va='bottom', alpha=0.5, size='xx-small')
 
 # Save the plot as a PNG file with higher resolution
 # plt.savefig('london-underground-map2.png', dpi=1200, bbox_inches='tight')
 
-ax.figure.savefig('tube-map-out.png', dpi=600, bbox_inches='tight')
+ax.figure.savefig('tube-map-out.png', dpi=1200, bbox_inches='tight')

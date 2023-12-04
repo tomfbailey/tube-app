@@ -35,7 +35,8 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# other files
-/data
-/raw
-*.png
+# Exclude all png files and all in data or raw, except data/tube-map-v1.png
+data/*
+!data/tube-map-v1.png
+raw/*
+/*.png
