@@ -78,7 +78,7 @@ class WayHandler(osmium.SimpleHandler):
             way_coords = [self.mapping[n.ref] for n in w.nodes]
             self.way_nodes.append(way_coords)
 # For nodes, use a separate data file
-gpkg_path = 'raw/subway-map-6.gpkg'
+gpkg_path = 'raw/subway_stations.gpkg'
 data = gpd.read_file(gpkg_path).to_crs(epsg=PROJECTION)
 
 # Read the first 5 rows of the GeoDataFrame
@@ -88,7 +88,7 @@ print(data.head())
 ax = data.plot(color='red', markersize=5, label='Station')
 
 # For ways (lines), use the OSM file
-input_file = 'raw/tube-data-6.osm'
+input_file = 'raw/london-underground.osm'
 
 # Do a first pass of input_file to map node ids to lat/lon
 node_map = RefHandler()
